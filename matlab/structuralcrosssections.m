@@ -16,14 +16,14 @@ opts = setvaropts(opts, "Designation", "WhitespaceRule", "preserve");
 opts = setvaropts(opts, ["Designation", "Section"], "EmptyFieldRule", "auto");
 
 % Import the data
-Crosssectionproperties = readtable("C:\Users\Ashwin Raj Kumar\MATLAB Drive\Projects\Swimmingpoollift\data\Cross section properties.xlsx", opts, "UseExcel", false);
+Crosssectionproperties = readtable("C:\Users\ripun\MTech_Project\data\Cross section properties.xlsx", opts, "UseExcel", false);
 
 clear opts
 
 
 
 
-[A,B,C] = crossectional_analysis('P',21.3,21.3,3.2,3.2,Crosssectionproperties);
+[A,B,C] = crossectional_analysis('P',127,127,5.4,5.4,Crosssectionproperties);
 disp('Pipe of dia P15')
 disp(strcat('A = ',num2str(C,'%.2f')))
 disp(strcat('Ixx = ',num2str(A,'%.2f')))
@@ -72,5 +72,5 @@ switch Section
 end
 
 A = find(Crosssectionproperties.Section==Section & Crosssectionproperties.A<=SecArea*1.15 & Crosssectionproperties.A>=SecArea/1.15);
-disp(Crosssectionproperties(A,:))
+disp(Crosssectionproperties(A,:));
 end
