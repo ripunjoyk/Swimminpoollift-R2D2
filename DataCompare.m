@@ -48,6 +48,8 @@ for loop=1:l
     if Error_area_p>=5 || Error_Ix_p>=5
         temp=table(Designation,Section,D,B,t,T,M,A,Ix,Iy,rx,ry);
         ErrorTable=[ErrorTable;temp];
+%         Area_cal
+%         Ix_cal
     end
     
 end
