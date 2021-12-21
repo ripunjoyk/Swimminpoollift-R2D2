@@ -45,42 +45,44 @@ for loop=1:l
     Error_area_p=norm(Area_actual(loop)-Area_cal)/Area_actual(loop)*100;
     Error_Ix_p=norm(Ix_actual(loop)-Ix_cal)/Ix_actual(loop)*100;
 
-    if Error_area_p>=5 || Error_Ix_p>=5
+    if Error_area_p>=10 || Error_Ix_p>=10
         temp=table(Designation,Section,D,B,t,T,M,A,Ix,Iy,rx,ry);
         ErrorTable=[ErrorTable;temp];
-%         Area_cal
-%         Ix_cal
+        Error_area_p
+        Error_Ix_p
     end
     
 end
 
-%%
-function [Ixx,ElstMod,SecArea] = crossectional_analysis(Section,X,Y,Tx,Ty)
+function [Ixx,R,SecArea] = crossectional_analysis(Section,Y,X,Tx,Ty)
 switch Section
     case 'P'
         SecArea = (pi*X*Y-pi*(X-2*Tx)*(Y-2*Ty))/400;
         Ixx = pi*(X*Y*X*Y-(X-2*Tx)^4)/640000;
-        ElstMod = 20*Ixx/X;
+        R = 20*Ixx/X;
 
     case 'B'
         SecArea = 2*Tx*((X-4*Tx)+(Y-4*Tx)+(3*pi*Tx/2))/100;
-        Ixx =  ((X*Y*Y*Y)-(X-2*Tx)*(Y-2*Ty)^3)/120000;
-        ElstMod = 20*Ixx/Y;
+        Ixx =  ((Tx*(Y-4*Ty)^3/6)+((((X-4*Tx)*Ty^3/3)+((X-4*Tx)*(Y-Tx)^2*Tx))/2)+(pi*Tx^4*(405-(3136/pi^2))/108)+(3*pi*Tx^2*((9*pi*(Y-4*Tx)+56*Tx)/(18*pi))^2));
+        %         Ixx =  (T*(Y-4*T)^3/6)+ (( ((B-4T)*T^3/3)+(T*(B-4T)*(D-T)^2))/2) + (pi*t^4(405-(3136/pi^2))/108)+(3*pi*T^2)*((9*pi*(Y-4*T)+56*T)/18*pi)^2;
+        R = 20*Ixx/Y;
 
     case 'L'
         SecArea = ((X-Tx)*Ty+(Y-Ty)*Tx+Tx*Ty)/100;
         Ixx = ((Tx*(Y-Ty)^3/12)+(X*Ty^3/12)+(X*Ty*(X-Ty)*(X-Ty)/4))/10000;
-        ElstMod = 20*Ixx/Y;
+        R = 20*Ixx/Y;
 
     case 'C'
         SecArea = (2*X*Ty+(Y-2*Ty)*Tx)/100;
         Ixx = ((Tx*(Y-2*Ty)^3/12)+2*((Ty*Ty*Ty*X/12)+(Ty*X*(Y-Ty)*(Y-Ty)/4)))/10000;
-        ElstMod = 20*Ixx/Y;
+        R = 20*Ixx/Y;
 
     case 'I'
         SecArea = (2*X*Ty+(Y-2*Ty)*Tx)/100;
         Ixx = (Tx*(Y-2*Ty)^3/12)+2*((Ty*Ty*Ty*X/12)+(Ty*X*(Y-Ty)*(Y-Ty)/4));
         Ixx = Ixx/10000;
-        ElstMod = 20*Ixx/Y;
+        R = 20*Ixx/Y;
+
 end
+
 end
