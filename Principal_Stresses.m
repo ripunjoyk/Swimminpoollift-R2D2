@@ -1,8 +1,8 @@
 clc;
 %FS=input('Factor of safety\n');
-L=.1;%input('Length in metres\n');
-F_a=-500;%input('Axial force\n');
-F_p=500;%input('Perpendicular force\n');
+L=0.1;%input('Length in metres\n');
+F_a=-1000;%input('Axial force\n');
+F_p=1000;%input('Perpendicular force\n');
 M=0;%input('Moment (+ for shagging)\n');
 Section='B';%input('Section shape\n');
 X=25;%input('X\n');
@@ -12,10 +12,7 @@ Ty=2.6;%input('T\n');
 
 
 [Sigma_max,Sigma_min,Sigma_max_2,Sigma_min_2,Sigma_max_In,Sigma_min_In,Sigma_max_In_2,Sigma_min_In_2]=Stress_P(Section,X,Y,Tx,Ty,F_a,F_p,M,L);
-Sigma_vm_1=sqrt(Sigma_max^2+Sigma_min^2-Sigma_max*Sigma_min);
-Sigma_vm_2=sqrt(Sigma_max_2^2+Sigma_min_2^2-Sigma_max_2*Sigma_min_2);
-Sigma_vm_3=sqrt(Sigma_max_In^2+Sigma_min_In^2-Sigma_max_In*Sigma_min_In);
-Sigma_vm_4=sqrt(Sigma_max_In_2^2+Sigma_min_In_2^2-Sigma_max_In_2*Sigma_min_In_2);
+Sigma_vm_max=Stress_VM(Sigma_max,Sigma_min,Sigma_max_2,Sigma_min_2,Sigma_max_In,Sigma_min_In,Sigma_max_In_2,Sigma_min_In_2);
 
 %%
 
@@ -179,4 +176,30 @@ elseif Temporary==abs(Sigma_max_In_2)|| Temporary==abs(Sigma_min_In_2)
 else
         disp('Something went wrong');
 end
+end
+%%
+function [Sigma_vm_max] = Stress_VM(Sigma_max,Sigma_min,Sigma_max_2,Sigma_min_2,Sigma_max_In,Sigma_min_In,Sigma_max_In_2,Sigma_min_In_2)
+
+Sigma_vm_1=sqrt(Sigma_max^2+Sigma_min^2-Sigma_max*Sigma_min);
+Sigma_vm_2=sqrt(Sigma_max_2^2+Sigma_min_2^2-Sigma_max_2*Sigma_min_2);
+Sigma_vm_3=sqrt(Sigma_max_In^2+Sigma_min_In^2-Sigma_max_In*Sigma_min_In);
+Sigma_vm_4=sqrt(Sigma_max_In_2^2+Sigma_min_In_2^2-Sigma_max_In_2*Sigma_min_In_2);
+Sigma_vm_max=max([Sigma_vm_1,Sigma_vm_2,Sigma_vm_3,Sigma_vm_4]);
+
+if Sigma_vm_max==abs(Sigma_vm_1)
+        disp('Max VM stress occurs at the upper boundary and is given by :');
+
+elseif Sigma_vm_max==abs(Sigma_vm_2)
+        disp('Max VM stress occurs at the lower boundary and is given by :');
+
+elseif Sigma_vm_max==abs(Sigma_vm_3)
+        disp('Max VM stress occurs at the point between the web and flange on the upper side and is given by');
+
+elseif Sigma_vm_max==abs(Sigma_vm_4)
+        disp('Max VM stress occurs at the point between the web and flange on the lower side and is given by');
+
+else
+        disp('Something went wrong');
+end
+disp(strcat(num2str(Sigma_vm_max,'%.4f'),' MPa'));
 end
