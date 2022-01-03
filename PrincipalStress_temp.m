@@ -15,42 +15,6 @@ for j=1:n
 [Sigma_max,Sigma_min,Sigma_max_2,Sigma_min_2,Sigma_max_In,Sigma_min_In,Sigma_max_In_2,Sigma_min_In_2]=Stress_P(Section,F_a,F_p,M,dL(j));
 Sigma_vm_max(j)=Stress_VM(Sigma_max,Sigma_min,Sigma_max_2,Sigma_min_2,Sigma_max_In,Sigma_min_In,Sigma_max_In_2,Sigma_min_In_2);
 
-%%
-
-% function [Ixx,R,SecArea] = crossectional_analysis(Section,X,Y,Tx,Ty,Crosssectionproperties)
-% switch Section
-%     case 'P'
-%         SecArea = (pi*X*Y-pi*(X-2*Tx)*(Y-2*Ty))/400;
-%         Ixx = pi*(X*Y*X*Y-(X-2*Tx)^4)/640000;
-%         R = 20*Ixx/X;
-% 
-%     case 'B'
-%         SecArea = 2*Tx*((X-4*Tx)+(Y-4*Tx)+(3*pi*Tx/2))/100;
-%         Ixx =  ((X*Y*Y*Y)-(X-2*Tx)*(Y-2*Ty)^3)/120000;
-%         %         Ixx =  (T*(Y-4*T)^3/6)+ (( ((B-4T)*T^3/3)+(T*(B-4T)*(D-T)^2))/2) + (pi*t^4(405-(3136/pi^2))/108)+(3*pi*T^2)*((9*pi*(Y-4*T)+56*T)/18*pi)^2;
-%         R = 20*Ixx/Y;
-% 
-%     case 'L'
-%         SecArea = ((X-Tx)*Ty+(Y-Ty)*Tx+Tx*Ty)/100;
-%         Ixx = ((Tx*(Y-Ty)^3/12)+(X*Ty^3/12)+(X*Ty*(X-Ty)*(X-Ty)/4))/10000;
-%         R = 20*Ixx/Y;
-% 
-%     case 'C'
-%         SecArea = (2*X*Ty+(Y-2*Ty)*Tx)/100;
-%         Ixx = ((Tx*(Y-2*Ty)^3/12)+2*((Ty*Ty*Ty*X/12)+(Ty*X*(Y-Ty)*(Y-Ty)/4)))/10000;
-%         R = 20*Ixx/Y;
-% 
-%     case 'I'
-%         SecArea = (2*X*Ty+(Y-2*Ty)*Tx)/100;
-%         Ixx = (Tx*(Y-2*Ty)^3/12)+2*((Ty*Ty*Ty*X/12)+(Ty*X*(Y-Ty)*(Y-Ty)/4));
-%         Ixx = Ixx/10000;
-%         R = 20*Ixx/Y;
-% 
-% end
-% 
-% end
-% 
-% 
 end
 
 figure(1)
@@ -202,27 +166,27 @@ Temporary=max(A);
 Temporary2=abs(min(A));
 Temporary=max(Temporary,Temporary2);
 disp(Temporary)
-% if Temporary==abs(Sigma_max)
-%         disp('Max stress occurs at the upper boundary and is given by :');
-%         disp(strcat(num2str(Sigma_max,'%.4f'),' MPa'));
-% elseif Temporary==abs(Sigma_max_2)
-%         disp('Max stress occurs at the lower boundary and is given by :');
-%         disp(strcat(num2str(Sigma_max_2,'%.4f'),' MPa'));
-% elseif Temporary==abs(Sigma_max_In)|| Temporary==abs(Sigma_min_In)
-%         disp('Max stress occurs at the point between the web and flange on the upper side and is given by');
-%         disp('Sigma_max');
-%         disp(strcat(num2str(Sigma_max_In,'%.4f'),' MPa'));
-%         disp('Sigma_min');
-%         disp(strcat(num2str(Sigma_min_In,'%.4f'),' MPa'));
-% elseif Temporary==abs(Sigma_max_In_2)|| Temporary==abs(Sigma_min_In_2)
-%         disp('Max stress occurs at the point between the web and flange on the lower side and is given by');
-%         disp('Sigma_max');
-%         disp(strcat(num2str(Sigma_max_In_2,'%.4f'),' MPa'));
-%         disp('Sigma_min');
-%         disp(strcat(num2str(Sigma_min_In_2,'%.4f'),' MPa'));
-% else
-%         disp('Something went wrong');
-% end
+if Temporary==abs(Sigma_max)
+        disp('Max stress occurs at the upper boundary and is given by :');
+        disp(strcat(num2str(Sigma_max,'%.4f'),' MPa'));
+elseif Temporary==abs(Sigma_max_2)
+        disp('Max stress occurs at the lower boundary and is given by :');
+        disp(strcat(num2str(Sigma_max_2,'%.4f'),' MPa'));
+elseif Temporary==abs(Sigma_max_In)|| Temporary==abs(Sigma_min_In)
+        disp('Max stress occurs at the point between the web and flange on the upper side and is given by');
+        disp('Sigma_max');
+        disp(strcat(num2str(Sigma_max_In,'%.4f'),' MPa'));
+        disp('Sigma_min');
+        disp(strcat(num2str(Sigma_min_In,'%.4f'),' MPa'));
+elseif Temporary==abs(Sigma_max_In_2)|| Temporary==abs(Sigma_min_In_2)
+        disp('Max stress occurs at the point between the web and flange on the lower side and is given by');
+        disp('Sigma_max');
+        disp(strcat(num2str(Sigma_max_In_2,'%.4f'),' MPa'));
+        disp('Sigma_min');
+        disp(strcat(num2str(Sigma_min_In_2,'%.4f'),' MPa'));
+else
+        disp('Something went wrong');
+end
 end
 %%
 function [Sigma_vm_max] = Stress_VM(Sigma_max,Sigma_min,Sigma_max_2,Sigma_min_2,Sigma_max_In,Sigma_min_In,Sigma_max_In_2,Sigma_min_In_2)
@@ -233,20 +197,20 @@ Sigma_vm_3=sqrt(Sigma_max_In^2+Sigma_min_In^2-Sigma_max_In*Sigma_min_In);
 Sigma_vm_4=sqrt(Sigma_max_In_2^2+Sigma_min_In_2^2-Sigma_max_In_2*Sigma_min_In_2);
 Sigma_vm_max=max([Sigma_vm_1,Sigma_vm_2,Sigma_vm_3,Sigma_vm_4]);
 
-% if Sigma_vm_max==abs(Sigma_vm_1)
-%         disp('Max VM stress occurs at the upper boundary and is given by :');
-% 
-% elseif Sigma_vm_max==abs(Sigma_vm_2)
-%         disp('Max VM stress occurs at the lower boundary and is given by :');
-% 
-% elseif Sigma_vm_max==abs(Sigma_vm_3)
-%         disp('Max VM stress occurs at the point between the web and flange on the upper side and is given by');
-% 
-% elseif Sigma_vm_max==abs(Sigma_vm_4)
-%         disp('Max VM stress occurs at the point between the web and flange on the lower side and is given by');
-% 
-% else
-%         disp('Something went wrong');
-% end
-% disp(strcat(num2str(Sigma_vm_max,'%.4f'),' MPa'));
+if Sigma_vm_max==abs(Sigma_vm_1)
+        disp('Max VM stress occurs at the upper boundary and is given by :');
+
+elseif Sigma_vm_max==abs(Sigma_vm_2)
+        disp('Max VM stress occurs at the lower boundary and is given by :');
+
+elseif Sigma_vm_max==abs(Sigma_vm_3)
+        disp('Max VM stress occurs at the point between the web and flange on the upper side and is given by');
+
+elseif Sigma_vm_max==abs(Sigma_vm_4)
+        disp('Max VM stress occurs at the point between the web and flange on the lower side and is given by');
+
+else
+        disp('Something went wrong');
+end
+disp(strcat(num2str(Sigma_vm_max,'%.4f'),' MPa'));
 end
