@@ -1,6 +1,6 @@
 clc;
 % clear variables;
-
+clear all;
 
 Designation='50 X 25 X 2.9';%input('Section shape\n');
 
