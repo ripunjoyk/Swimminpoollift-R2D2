@@ -1,28 +1,28 @@
-function [vm1,vm2,vm3,vm4,vm_max] = principlestresses(F_a,F_p,M,L,Section,Designation)
-%PRINCIPLESTRESSES Summary of this function goes here
-opts = spreadsheetImportOptions("NumVariables", 12);
-% Specify sheet and range
-opts.Sheet = "Sheet1";
-opts.DataRange = "A2:L273";
-% Specify column names and types
-opts.VariableNames = ["Designation", "Section", "D", "B", "t", "T", "M", "A", "Ix", "Iy", "Rx", "Ry"];
-opts.VariableTypes = ["string", "categorical", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double"];
-% Specify variable properties
-opts = setvaropts(opts, "Designation", "WhitespaceRule", "preserve");
-opts = setvaropts(opts, ["Designation", "Section"], "EmptyFieldRule", "auto");
-% Import the data
-Crosssectionproperties = readtable("C:\Users\ripun\Folder\Swimminpoollift-R2D2-main\Swimminpoollift-R2D2-main\data\Cross section properties.xlsx", opts, "UseExcel", false);
-clear opts
-no = find(Crosssectionproperties.Section == Section & Crosssectionproperties.Designation == Designation);
-if no== 0
-    disp("Please enter the details accurately for section properties and section type")
-end
-SecArea =  Crosssectionproperties.A(no);
-Ixx = Crosssectionproperties.Ix(no);
-Y = Crosssectionproperties.D(no);
-X = Crosssectionproperties.B(no);
-Ty = Crosssectionproperties.T(no);
-Tx = Crosssectionproperties.t(no);
+function [vm1,vm2,vm3,vm4,vm_max] = principlestresses(F_a,F_p,M,L,Section,Ixx,SecArea,X,Y,Tx,Ty)
+% %PRINCIPLESTRESSES Summary of this function goes here
+% opts = spreadsheetImportOptions("NumVariables", 12);
+% % Specify sheet and range
+% opts.Sheet = "Sheet1";
+% opts.DataRange = "A2:L273";
+% % Specify column names and types
+% opts.VariableNames = ["Designation", "Section", "D", "B", "t", "T", "M", "A", "Ix", "Iy", "Rx", "Ry"];
+% opts.VariableTypes = ["string", "categorical", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double"];
+% % Specify variable properties
+% opts = setvaropts(opts, "Designation", "WhitespaceRule", "preserve");
+% opts = setvaropts(opts, ["Designation", "Section"], "EmptyFieldRule", "auto");
+% % Import the data
+% Crosssectionproperties = readtable("C:\Users\ripun\Folder\Swimminpoollift-R2D2-main\Swimminpoollift-R2D2-main\data\Cross section properties.xlsx", opts, "UseExcel", false);
+% clear opts
+% no = find(Crosssectionproperties.Section == Section & Crosssectionproperties.Designation == Designation);
+% if no== 0
+%     disp("Please enter the details accurately for section properties and section type")
+% end
+% SecArea =  Crosssectionproperties.A(no);
+% Ixx = Crosssectionproperties.Ix(no);
+% Y = Crosssectionproperties.D(no);
+% X = Crosssectionproperties.B(no);
+% Ty = Crosssectionproperties.T(no);
+% Tx = Crosssectionproperties.t(no);
         Sigma_min = 0;
         Sigma_min_2 = 0;
 switch Section

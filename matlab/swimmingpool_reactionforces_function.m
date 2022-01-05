@@ -1,7 +1,7 @@
 clc
 clear all
 close all
-theta = 90+[-15:5:50];
+theta = 90+[-20:2:50];
 Mass = 100;
 Mass = Mass+20;         %10Kg extra mass added for the link!
 g = 9.81;
@@ -13,24 +13,24 @@ L_CD = 0.15207;
 L_CE = 0.60978;
 L_AC = 0.5905;
 L_AD = 0.493;
-n=30;
+n=50;
 L_div = 0.0:L_CG/(n-1):L_CG;
 
 Fs = 1500;
-
-[R3H_A,R3_A_L_theta] = reactionforceslink3(Mass*g,theta,L_CD,L_GJ);
+%%
+[R3H_A,R3_A_L_theta] = reactionforceslink3(Mass*g,theta,L_CD,L_GJ,n);
 
 [R2C_A,R2C_S,Torque1,R2G_A,R2G_S,R3D_A] = reactionforceslink2(Mass*g,Fs,theta,L_CG,L_CK,L_CD,L_CE,L_GJ);
 R2G_A=-R2G_A;
 R2C_S=-R2C_S;
 R2C_A=-R2C_A;
-figure(1)
+% figure(1)
 % plot(theta,R2C_S,'*-','LineWidth',1.5)
 % hold on
 % plot(theta,R2G_S,'*-','LineWidth',1.5)
 [X,Y] = meshgrid(L_div,theta);
-
-[V3,A3,M3]=reactionforceslink2_length(Fs,R2C_A,R2C_S,R2G_A,R2G_S,theta,L_CG,L_CE,L_CK);
+%%
+[V3,A3,M3]=reactionforceslink2_length(Fs,R2C_A,R2C_S,R2G_A,R2G_S,theta,L_CG,L_CE,L_CK,n);
 
 % 
 % figure(2)
@@ -38,7 +38,7 @@ figure(1)
 % hold on
 % plot(L_div,M3(1,:))
 % plot(L_div,A3(1,:))
-
+%%
 figure(3)
 surf(X,Y,V3)
 xlabel('{L}_{CG}','FontSize',15)
@@ -61,9 +61,10 @@ zlabel('F_{A}','FontSize',15)
 % vm2 = zeros(14,10);
 % vm3 = zeros(14,10);
 % vm4 = zeros(14,10);
+[Section,Ixx,SecArea,X_in,Y_in,Tx,Ty]=get_Data('50 X 25 X 2.9');
 for i = 1:length(theta)
     for j=1:length(L_div)
-        [vm1(i,j),vm2(i,j),vm3(i,j),vm4(i,j),vm_max(i,j)] = principlestresses(A3(i,j),V3(i,j),M3(i,j),L_CG,'B','50 X 25 X 2.9');
+        [vm1(i,j),vm2(i,j),vm3(i,j),vm4(i,j),vm_max(i,j)] = principlestresses(A3(i,j),V3(i,j),M3(i,j),L_CG,Section,Ixx,SecArea,X_in,Y_in,Tx,Ty);
     end
 end  
 
@@ -113,8 +114,8 @@ xlabel('{L}_{CG}','FontSize',15)
 ylabel('\theta','FontSize',15)
 zlabel('\sigma_{Vm_max}','FontSize',15)
 
-function [R_H_theta,R_3_L_theta] = reactionforceslink3(Mg,theta,L_CD,L_GJ)
-n = 10;
+function [R_H_theta,R_3_L_theta] = reactionforceslink3(Mg,theta,L_CD,L_GJ,n)
+% n = 10;
 subtend_angle = atand(110/105);
 for i=1:length(theta)
     R_H_theta(i) = L_GJ*Mg/(L_CD*sind(theta(i)-subtend_angle));
@@ -154,9 +155,9 @@ end
 
 end
 
-function [V3,A3,M3]=reactionforceslink2_length(Fs,R2C_A,R2C_S,R2G_A,R2G_S,theta,L_CG,L_CE,L_CK)
+function [V3,A3,M3]=reactionforceslink2_length(Fs,R2C_A,R2C_S,R2G_A,R2G_S,theta,L_CG,L_CE,L_CK,n)
 
-n=30;
+% n=30;
 L_div = 0.0:L_CG/(n-1):L_CG;
 % L_div = round(L_div,2)
 V3 = zeros(length(theta),n);
@@ -215,6 +216,39 @@ for i=1:length(theta)
 end
 
 end
+%% 
+function [Section,Ixx,SecArea,X,Y,Tx,Ty] = get_Data(Designation)
+opts = spreadsheetImportOptions("NumVariables", 12);
 
+% Specify sheet and range
+opts.Sheet = "Sheet1";
+opts.DataRange = "A2:L277";
+
+% Specify column names and types
+opts.VariableNames = ["Designation", "Section", "D", "B", "t", "T", "M", "A", "Ix", "Iy", "Rx", "Ry"];
+opts.VariableTypes = ["string", "categorical", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double"];
+
+% Specify variable properties
+opts = setvaropts(opts, "Designation", "WhitespaceRule", "preserve");
+opts = setvaropts(opts, ["Designation", "Section"], "EmptyFieldRule", "auto");
+
+% Import the data
+Crosssectionproperties = readtable("C:\Users\ripun\MTech_Project\data\Cross section properties.xlsx", opts, "UseExcel", false);
+l=height(Crosssectionproperties);
+clear opts
+l=height(Crosssectionproperties);
+for loop=1:l
+    if Designation==Crosssectionproperties.Designation(loop)
+        Section=Crosssectionproperties.Section(loop);
+        Ixx=Crosssectionproperties.Ix(loop);
+        SecArea=Crosssectionproperties.A(loop);
+        X=Crosssectionproperties.B(loop);
+        Y=Crosssectionproperties.D(loop);
+        Tx=Crosssectionproperties.t(loop);
+        Ty=Crosssectionproperties.T(loop);
+    end
+end
+
+end
 
 
